@@ -10,6 +10,7 @@ program ejercicio2;
 procedure imprimirDigitos(n: integer);
 begin
 	if (n <> 0) then begin
+		{writeln(n DIV 10);}
 		imprimirDigitos(n DIV 10);
 		write(n MOD 10, ' ');
 	end;

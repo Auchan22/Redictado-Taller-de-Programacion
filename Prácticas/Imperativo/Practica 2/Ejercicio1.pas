@@ -71,7 +71,7 @@ begin
 end;
 
 //Inciso E
-function listaCaracteres(): TLista;
+function listaCaracteres(): TLista; // Agregar adelante de manera "recursiva" 
 var
 	c: char;
 	nue: TLista;
@@ -87,6 +87,33 @@ begin
 		listaCaracteres:= nue;
 	end;
 end;
+
+{
+procedure generarLista(var L, ult: TLista);
+	procedure agregarAtras(var L, ult: TLista; c: char);
+	var
+		nue: TLista;
+	begin
+		new(nue);
+		nue^.dato:= c;
+		nue^.sig:= nil;
+		if(L <> nil) then
+			ult^.sig:= nue
+		else
+			L:= nue;
+		ult:= nue;
+	end;
+var
+	c: char;
+begin
+	writeln('Ingrese un caracter: ');
+	readln(c);
+	if(c <> '.') then begin
+		agregarAtras(L, ult, c);
+		generarLista(L, ult);
+	end;
+end;
+}
 
 //Inciso F
 procedure imprimirListaEnOrden(L: TLista);
@@ -131,6 +158,7 @@ begin
 	writeln(' ');
 	writeln('Leyendo caracteres...');
 	writeln(' ');
+	{generarLista(L, ult)};
 	L:= listaCaracteres();
 	imprimirListaEnOrden(L);
 	writeln(' ');
