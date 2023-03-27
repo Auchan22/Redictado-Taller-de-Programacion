@@ -1,3 +1,17 @@
+{
+Se lee información acerca de las ventas de productos realizadas en las sucursales de una empresa. De
+cada venta se conoce fecha, código de producto, cantidad vendida y monto total de la venta. La lectura
+finaliza cuando se lee el código de producto -1, el cual no se procesa. Implementar un programa para
+que a partir de la información leída, resuelva los siguientes ítems:
+a) Generar un árbol binario de búsqueda ordenado por código de producto, donde cada nodo
+contenga el código del producto y la cantidad total vendida. El código de producto no puede
+repetirse en el árbol.
+b) Realizar un módulo que reciba el árbol generado en a. y una cantidad, y retorne la cantidad de
+códigos de producto cuya cantidad total vendida superan la cantidad recibida.
+Nota: La información se lee en forma desordenada. Puede existir mas de una venta para un mismo
+código de producto.
+}
+
 program Parcial1;
 type
 	TFecha = record
