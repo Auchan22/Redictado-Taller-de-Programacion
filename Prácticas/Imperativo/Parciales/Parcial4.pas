@@ -24,7 +24,7 @@ el encabezado del procedimiento e invocarlo para que el programa compile
 program Parcial4;
 const
 	DIMF = 4;
-	MAXSTRING = 'ZZZ';
+	MAXSTRING = 'zzz';
 type
 	TRangoVacuna = 1..DIMF;
 	TRangoCarga = 0..DIMF;
@@ -108,11 +108,14 @@ procedure cargarVector(var v: TVector);
 	
 	procedure leerNotificacion(var n: TNotificacion);
 	begin
-		writeln;
-		writeln('---');
-		
-		writeln('---');
-		writeln;
+		write('Ingrese nombre pais: ');
+		readln(n.nombrePais);
+		if(n.nombrePais <> MAXSTRING) then begin
+			n.fecha.dia:= random(31) + 1;
+			n.fecha.mes:= random(12) + 1;
+			n.tipoV:= random(DIMF) + 1;
+			n.cantDosis:= random(100) + 1;
+		end;
 	end;
 
 var
@@ -120,7 +123,7 @@ var
 	NG: TNotificacionAguardar;
 begin
 	leerNotificacion(N);
-	while (N.tipoV <> 0) do begin
+	while (N.nombrePais <> MAXSTRING) do begin
 		cargarDatosAguardar(N, NG);
 		insertarOrdenado(v[N.tipoV], NG);
 		leerNotificacion(N);
@@ -135,9 +138,9 @@ procedure merge(v: TVector; var a: TArbol);
 		i, pos: integer;
 	begin
 		pos:= -1;
-		n.nombrePais := MAXSTRING;
+		n.nombrePais:= 'zzz';
 		for i:= 1 to DIMF do 
-			if(v[i] <> nil) and (v[i]^.dato.nombrePais <= n.nombrePais) then begin
+			if(v[i] <> nil) and (v[i]^.dato.nombrePais < n.nombrePais) then begin
 				pos:= i;
 				n:= v[i]^.dato;
 			end;
@@ -157,7 +160,7 @@ procedure merge(v: TVector; var a: TArbol);
 			a^.HI:= nil;
 		end
 		else
-			if(a^.dato.nombrePais > d.nombrePais) then
+			if(a^.dato.totalDosis > d.totalDosis) then
 				crear(a^.HI, d)
 			else
 				crear(a^.HD, d);
@@ -179,6 +182,54 @@ begin
 	end;
 end;
 
+//Inciso B
+procedure informarMaxVacunas(a: TArbol);
+	
+	function maximo(a: TArbol): TString;
+	begin
+		if(a^.HD = nil) then
+			maximo:= a^.dato.nombrePais
+		else
+			maximo:= maximo(a^.HD);
+	end;
+
+begin
+	writeln;
+	writeln('---');
+	writeln('El nombre del pais que aplico la mayor cantidad de dosis es: ', maximo(a));
+	writeln('---');
+	writeln;
+end;
+
+//Funciones Generales
+procedure imprimirDatos(n: TNotificacionAguardar);
+begin
+	writeln;
+	writeln('-> Dia: ', n.fecha.dia, ' | -> Mes: ', n.fecha.mes, ' | -> Nombre Pais: ', n.nombrePais, ' | -> Cantidad de Dosis: ', n.cantDosis);
+	writeln;
+end;
+
+
+procedure imprimirLista(L: TLista);
+begin
+	if(L <> NIL) then begin
+		imprimirDatos(L^.dato);
+		imprimirLista(L^.sig);
+	end;
+end;
+
+
+procedure imprimirVector(v: TVector);
+var
+	i: TRangoVacuna;
+begin
+	for i:= 1 to DIMF do begin
+		writeln('Imprimiendo Notificaciones de la vacuna Tipo: ', i);
+		imprimirLista(v[i]);
+	end;
+end;
+
+
 var
 	v: TVector;
 	a: TArbol;
@@ -186,6 +237,10 @@ begin
 	Randomize;
 	inicializarVector(v);
 	cargarVector(v);
+	imprimirVector(v);
 	a:= nil;
 	merge(v, a);
+	if( a = nil) then
+		writeln('NIL');
+	informarMaxVacunas(a);
 end.
