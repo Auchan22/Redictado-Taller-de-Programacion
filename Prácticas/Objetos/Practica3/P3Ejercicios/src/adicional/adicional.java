@@ -8,7 +8,6 @@ package adicional;
 import PaqueteLectura.Lector;
 
 //Se podria implementar el mismo programa, pero con una matriz, con los generos como filas y los alumnos como columnas
-
 /**
  *
  * @author agust
@@ -60,7 +59,7 @@ public class adicional {
             C.actualizarPuntajePorNombre(g, n, p);
             System.out.println("---");
         }
-        
+
         System.out.println(C.toString());
     }
 }
