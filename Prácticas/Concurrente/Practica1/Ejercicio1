@@ -1,0 +1,48 @@
+programa ej1p1
+procesos
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  proceso depositarFlores(ES fD: numero)
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+      fD := fD + 1
+  fin
+  proceso recorrerAvenida(ES cFD: numero; ES esq: numero)
+  variables
+    cF: numero
+  comenzar
+    cF:= 0
+    mientras(PosCa < 100)
+      si(HayFlorEnLaEsquina)
+        juntarFlores(cF)
+        Informar(1)
+      sino
+        esq:= esq + 1
+      mover
+    si(PosCa = 100)
+      juntarFlores(cF)
+    depositarFlores(cFD)
+  fin
+areas
+  av1: AreaP(1,1,1,100)
+robots
+  robot recolector
+  variables
+    cantFloresDepositadas, cantEsquinas: numero
+  comenzar
+    cantFloresDepositadas:= 0
+    cantEsquinas:= 0
+    recorrerAvenida(cantFloresDepositadas, cantEsquinas)
+    Informar(cantFloresDepositadas, cantEsquinas)
+  fin
+variables
+  r1: recolector
+comenzar
+  AsignarArea(r1, av1)
+  Iniciar(r1, 1, 1)
+fin
