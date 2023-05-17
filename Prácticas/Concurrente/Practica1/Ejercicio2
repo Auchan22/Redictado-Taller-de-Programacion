@@ -1,0 +1,45 @@
+programa ej2p1
+procesos
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP := cP + 1
+  fin
+  proceso recorrerLado(ES cP: numero)
+  comenzar
+    repetir 20
+      juntarPapeles(cP)
+      mover
+  fin
+areas
+  cuadrado: AreaC(10,10, 30, 30)
+robots
+  robot recolector
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles:= 0
+    si(PosCa = 30) & (PosAv = 10)
+      derecha
+    si(PosCa = 30) & (PosAv=30)
+      repetir 2
+        derecha
+    si(PosCa = 10) & (PosAv = 30)
+      repetir 3
+        derecha
+    recorrerLado(cantPapeles)
+    Informar(cantPapeles)
+  fin
+variables
+  r1, r2, r3, r4: recolector
+comenzar
+  AsignarArea(r1, cuadrado)
+  AsignarArea(r2, cuadrado)
+  AsignarArea(r3, cuadrado)
+  AsignarArea(r4, cuadrado)
+  Iniciar(r1, 10, 10)
+  Iniciar(r2, 10, 30)
+  Iniciar(r3, 30, 30)
+  Iniciar(r4, 30, 10)
+fin
