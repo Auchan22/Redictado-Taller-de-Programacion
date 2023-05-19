@@ -1,0 +1,91 @@
+programa ej3p1
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin  
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF := cF + 1
+  fin
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP:= cP + 1
+  fin
+  proceso depositarFlores
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso depositarPapeles
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso hacerLado(E lado: numero; ES tF: numero; ES tP: numero)
+  variables
+    cF: numero
+    cP: numero
+  comenzar
+    cF:= 0
+    cP:= 0
+    repetir lado
+      juntarFlores(cF)
+      depositarFlores
+      juntarPapeles(cP)
+      depositarPapeles
+      mover
+    tF:= tF + cF
+    tP:= tP + cP
+  fin
+  proceso hacerEscalon(E lado: numero; ES cEscalones: numero)
+  variables
+    tF: numero
+    tP: numero
+  comenzar
+    tF:= 0
+    tP:= 0
+    repetir 2
+      hacerLado(lado, tF, tP)
+      derecha
+    repetir 2
+      derecha
+    si(tP = (tF + 1))
+      cEscalones:= cEscalones + 1
+  fin
+  proceso hacerEscalera(ES cEscalones: numero)
+  variables
+    escalones, lado: numero
+  comenzar
+    escalones:= 4
+    lado:= 1
+    repetir escalones
+      hacerEscalon(lado, cEscalones)
+      lado:= lado + 1
+  fin
+areas
+  ciudad: AreaC(1, 1, 100, 100)
+robots
+  robot paseador
+  variables
+    cEsquinas: numero
+  comenzar
+    cEsquinas:= 0
+    hacerEscalera(cEsquinas)
+    Informar(cEsquinas)
+  fin
+variables
+  r1, r2, r3: paseador
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  Iniciar(r1, 12, 14)
+  Iniciar(r2, 17, 10)
+  Iniciar(r3, 22, 6)
+fin

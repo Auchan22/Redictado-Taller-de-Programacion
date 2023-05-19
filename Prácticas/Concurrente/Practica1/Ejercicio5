@@ -1,0 +1,76 @@
+programa ej5p1
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso depositarFlores
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso depositarPapeles
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso recorrerCalle
+  comenzar
+    repetir 19
+      juntarFlores
+      mover
+    juntarFlores
+  fin
+  proceso recorrerAvenida
+  comenzar
+    repetir 19
+      juntarPapeles
+      mover
+    juntarPapeles
+  fin
+areas
+  area1: AreaP(1, 75, 21, 80)
+  area2: AreaP(75, 80, 80, 100)
+  area3: AreaP(80, 10, 100, 15)
+  area4: AreaP(10, 1, 15, 21)
+robots
+  robot florero
+  variables
+    AVInicial: numero
+  comenzar
+    derecha
+    AVInicial:= PosAv
+    recorrerCalle
+    Pos(AVInicial, PosCa + 5)
+    recorrerCalle
+    depositarFlores
+  fin
+  robot papelero
+  variables
+    CAInicial: numero
+  comenzar
+    CAInicial:= PosCa
+    recorrerAvenida
+    Pos(PosAv + 5, CAInicial)
+    recorrerAvenida
+    depositarPapeles
+  fin
+variables
+  r1, r3: florero
+  r2, r4: papelero
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(r3, area3)
+  AsignarArea(r4, area4)
+  Iniciar(r1, 1, 75)
+  Iniciar(r2, 75, 80)
+  Iniciar(r3, 80, 10)
+  Iniciar(r4, 10, 1)
+fin

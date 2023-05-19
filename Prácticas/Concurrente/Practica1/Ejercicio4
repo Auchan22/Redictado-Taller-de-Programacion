@@ -1,0 +1,86 @@
+programa ej4p1
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso girar
+  comenzar
+    si(PosCa = 1)
+      izquierda
+      mover
+      izquierda
+    sino
+      si(PosCa = 100)
+        derecha
+        mover
+        derecha
+  fin
+  proceso recorrerAvenidaF
+  comenzar
+    repetir 99
+      juntarFlores
+      mover
+    juntarFlores
+  fin
+  proceso recorrerAvenidaP
+  comenzar
+    repetir 99
+      juntarPapeles
+      mover
+    juntarPapeles
+  fin
+  proceso recorridoFlorero
+  comenzar
+    repetir 24
+      recorrerAvenidaF
+      girar
+    recorrerAvenidaF
+  fin
+  proceso recorridoPapelero
+  comenzar
+    repetir 24
+      recorrerAvenidaP
+      girar
+    recorrerAvenidaP
+  fin
+areas
+  area1: AreaP(1, 1, 25, 100)
+  area2: AreaP(26, 1, 50, 100)
+  area3: AreaP(51, 1, 75, 100)
+  area4: AreaP(76, 1, 100, 100)
+robots
+  robot florero
+  comenzar
+    recorridoFlorero
+    Pos(51, 1)
+    recorridoFlorero
+  fin
+  robot papelero
+  comenzar
+    recorridoPapelero
+    Pos(76, 1)
+    recorridoPapelero
+  fin
+variables
+  r1: florero
+  r2: papelero
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, area3)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, area4)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 26, 1)
+fin
