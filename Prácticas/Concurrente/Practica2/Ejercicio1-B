@@ -1,0 +1,48 @@
+programa ej1p2
+procesos
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  proceso recorrerCalle(ES cF: numero)
+  comenzar
+    repetir 9
+      juntarFlores(cF)
+      mover
+    juntarFlores(cF)
+  fin
+areas
+  area1: AreaP(1, 1, 1, 10)
+  area2: AreaP(2, 11, 2, 20)
+  areaF: AreaP(2, 1, 2, 1)
+robots
+  robot competidor
+  variables
+    cF: numero
+  comenzar
+    cF:= 0
+    recorrerCalle(cF)
+    EnviarMensaje(cF, rf)
+  fin
+  robot fiscalizador
+  variables
+    floresGanador, floresPerdedor, dif: numero
+  comenzar
+    RecibirMensaje(floresPerdedor, *)
+    RecibirMensaje(floresGanador, *)
+    dif:= floresGanador - floresPerdedor
+    Informar(dif)
+  fin
+variables
+  r1, r2: competidor
+  rf: fiscalizador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(rf, areaF)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 2, 11)
+  Iniciar(rf, 2, 1)
+fin
