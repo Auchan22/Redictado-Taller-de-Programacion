@@ -1,0 +1,92 @@
+programa ej2-p2
+procesos
+  proceso asignarAlto
+  variables
+    alto: numero
+  comenzar  
+    Random(alto, 1, 5)
+    EnviarMensaje(alto, r1)
+    EnviarMensaje(alto, r2)
+    EnviarMensaje(alto, r3)
+  fin
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP:= cP + 1
+  fin
+  proceso hacerLado(E l: numero; ES tF: numero; ES tP: numero)
+  variables
+    cF, cP: numero
+  comenzar
+    cF:= 0
+    cP:= 0
+    repetir l
+      juntarFlores(cF)
+      juntarPapeles(cP)
+      mover
+    tF:= tF + cF
+    tP:= tP + cP
+  fin
+  proceso hacerEscalon(E alto: numero;ES tF: numero; ES tP: numero)
+  comenzar
+    hacerLado(1, tF, tP)
+    derecha
+    hacerLado(alto, tF, tP)
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+areas
+  zona: AreaPC(2, 1, 100, 100)
+  areaJ: AreaP(1, 1, 1, 1)
+robots
+  robot robotito
+  variables
+    tF, tP: numero
+    cantEscalones: numero
+    alto: numero
+  comenzar
+    RecibirMensaje(alto, rJ)
+    cantEscalones:= 0
+    repetir 4
+      tF:= 0
+      tP:= 0
+      hacerEscalon(alto, tF, tP)
+      izquierda
+      si(tF > tP)
+        cantEscalones:= cantEscalones + 1
+    EnviarMensaje(cantEscalones, rJ)
+  fin
+  robot jefe
+  variables
+    total, aux: numero
+  comenzar
+    asignarAlto
+    total:= 0
+    repetir 3
+      RecibirMensaje(aux, *)
+      total:= total + aux
+    Informar(total)
+  fin
+variables
+  r1, r2, r3: robotito
+  rJ: jefe
+comenzar
+  AsignarArea(r1, zona)
+  AsignarArea(r2, zona)
+  AsignarArea(r3, zona)
+  AsignarArea(rJ, areaJ)
+  Iniciar(r1, 2, 1)
+  Iniciar(r2, 7, 1)
+  Iniciar(r3, 12, 1)
+  Iniciar(rJ, 1, 1)
+fin
