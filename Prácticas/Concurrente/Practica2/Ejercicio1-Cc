@@ -13,6 +13,11 @@ procesos
       mover
     juntarFlores(cF)
   fin
+  proceso esMaximo(E f: numero; ES max: numero)
+  comenzar
+    si(f >= max)
+      max:= f
+  fin
 areas
   area1: AreaP(1, 1, 1, 10)
   area2: AreaP(2, 11, 2, 20)
@@ -32,12 +37,13 @@ robots
   fin
   robot fiscalizador
   variables
-    floresGanador, floresPerdedor, dif: numero
+    flores, floresMax: numero
   comenzar
-    repetir 5
-      RecibirMensaje(floresPerdedor, *)
-    RecibirMensaje(floresGanador, *)
-    Informar(floresGanador)
+    floresMax:= -1
+    repetir 6
+      RecibirMensaje(flores, *)
+      esMaximo(flores, floresMax)
+    Informar(floresMax)
   fin
 variables
   r1, r2, r3, r4, r5, r6: competidor
