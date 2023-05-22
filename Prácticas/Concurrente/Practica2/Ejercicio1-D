@@ -38,21 +38,38 @@ robots
     cF:= 0
     RecibirMensaje(ID, rf)
     recorrerCalle(cF)
-    EnviarMensaje(cF, rf)
     EnviarMensaje(ID, rf)
+    EnviarMensaje(cF, rf)
   fin
   robot fiscalizador
   variables
-    floresGanador, floresPerdedor: numero
-    IDGanador, IDPerdedor: numero
+    IDMax, fMax: numero
+    ID, cantFlores: numero
   comenzar
+    fMax:= -1
     AsignarID
-    repetir 5
-      RecibirMensaje(floresPerdedor, *)
-      RecibirMensaje(IDPerdedor, *)
-    RecibirMensaje(floresGanador, *)
-    RecibirMensaje(IDGanador, *)
-    Informar(IDGanador, floresGanador)
+    repetir 6
+      RecibirMensaje(ID, *)
+      si(ID = 1)
+        RecibirMensaje(cantFlores, r1)
+      sino
+        si(ID = 2)
+          RecibirMensaje(cantFlores, r2)
+        sino
+          si(ID = 3)
+            RecibirMensaje(cantFlores, r3)
+          sino
+            si(ID = 4)
+              RecibirMensaje(cantFlores, r4)
+            sino
+              si(ID = 5)
+                RecibirMensaje(cantFlores, r5)
+              sino
+                RecibirMensaje(cantFlores, r6)
+      si(cantFlores >= fMax)
+        fMax:= cantFlores
+        IDMax:= ID
+    Informar(ID, fMax)
   fin
 variables
   r1, r2, r3, r4, r5, r6: competidor
