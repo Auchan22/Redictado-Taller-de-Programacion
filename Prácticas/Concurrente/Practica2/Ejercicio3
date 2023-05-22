@@ -1,0 +1,75 @@
+programa ej3-p2
+procesos
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP:= cP + 1
+  fin
+  proceso recorrerCalle(E esPapelero: boolean; ES item: numero)
+  comenzar
+    derecha
+    repetir 9
+      si(esPapelero )
+        juntarPapeles(item)
+      sino
+        juntarFlores(item)
+      mover
+    si(esPapelero)
+      juntarPapeles(item)
+    sino
+      juntarFlores(item)
+  fin
+areas
+  area1: AreaPC(1, 1, 21, 1)
+  area2: AreaPC(1, 5, 21, 5)
+robots
+  robot equipoA
+  variables
+    item, aux: numero
+  comenzar
+    item:= 0
+    si(PosAv = 11)
+      RecibirMensaje(aux, A1)
+      Informar(aux)
+      item:= item + aux
+    recorrerCalle(V, item)
+    si(PosAv = 10)
+      EnviarMensaje(item, A2)
+    sino
+      Informar(item)
+  fin
+  robot equipoB
+  variables
+    item, aux: numero
+  comenzar
+    item:= 0
+    si(PosAv = 11)
+      RecibirMensaje(aux, B1)
+      Informar(aux)
+      item:= item + aux
+    recorrerCalle(F, item)
+    si(PosAv = 10)
+      EnviarMensaje(item, B2)
+    sino
+      Informar(item)
+  fin
+variables
+  A1, A2: equipoA
+  B1, B2: equipoB
+comenzar
+  AsignarArea(A1, area1)
+  AsignarArea(A2, area1)
+  AsignarArea(B1, area2)
+  AsignarArea(B2, area2)
+  Iniciar(A1, 1, 1)
+  Iniciar(A2, 11, 1)
+  Iniciar(B1, 1, 5)
+  Iniciar(B2, 11, 5)
+fin

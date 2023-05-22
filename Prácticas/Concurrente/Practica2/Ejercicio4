@@ -1,0 +1,156 @@
+programa ej4-p2
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+  proceso activarRobot(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, r1)
+    sino
+      si(id = 2)
+        EnviarMensaje(V ,r2)
+      sino
+        si(id = 3)
+          EnviarMensaje(V, r3)
+        sino
+          EnviarMensaje(V, r4)
+  fin
+  proceso avisarFin
+  comenzar
+    EnviarMensaje(F, r1)
+    EnviarMensaje(F, r2)
+    EnviarMensaje(F, r3)
+    EnviarMensaje(F, r4)
+  fin
+  proceso avisarGanador(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+      EnviarMensaje(F, r4)
+    sino
+      si(id = 2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(V, r2)
+        EnviarMensaje(F, r3)
+        EnviarMensaje(F, r4)
+      sino
+        si(id = 3)
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(V, r3)
+          EnviarMensaje(F, r4)
+        sino
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r3)
+          EnviarMensaje(V, r4)
+  fin
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP:= cP + 1
+  fin
+areas
+  cuadrante: AreaPC(25, 25, 75, 75)
+  area1: AreaP(25, 1, 25, 1)
+  area2: AreaP(30, 1, 30, 1)
+  area3: AreaP(35, 1, 35, 1)
+  area4: AreaP(40, 1, 40, 1)
+  areaF: AreaP(1, 1, 1, 1)
+robots
+  robot recolector
+  variables
+    cF, cP: numero
+    AVOriginal, CAOriginal: numero
+    ID: numero
+    ok: boolean
+    AVRandom, CARandom: numero
+    total: numero
+  comenzar
+    cF:= 0
+    cP:= 0
+    AVOriginal:= PosAv
+    CAOriginal:= PosCa
+    RecibirMensaje(ID, rF)
+    RecibirMensaje(ok, rF)
+    mientras(ok)
+      Random(AVRandom, 25, 75)
+      Random(CARandom, 25, 75)
+      Pos(AVRandom, CARandom)
+      juntarFlores(cF)
+      juntarPapeles(cP)
+      Pos(AVOriginal, CAOriginal)
+      EnviarMensaje(V, rF)
+      RecibirMensaje(ok, rF)
+    total:= cF + cP
+    EnviarMensaje(ID, rF)
+    EnviarMensaje(total, rF)
+    RecibirMensaje(ok, rF)
+    si(ok)
+      Pos(50, 50)
+  fin
+  robot fiscalizador
+  variables
+    aux: boolean
+    IDRandom: numero
+    itemMax, idMax: numero
+    itemAct, idAct: numero
+  comenzar
+    itemMax:= -1
+    idMax:= 0
+    asignarID
+    repetir 10
+      Random(IDRandom, 1, 4)
+      activarRobot(IDRandom)
+      RecibirMensaje(aux, *)
+    avisarFin
+    repetir 4
+      RecibirMensaje(idAct, *)
+      si(idAct = 1)
+        RecibirMensaje(itemAct, r1)
+      sino
+        si(idAct = 2)
+          RecibirMensaje(itemAct, r2)
+        sino
+          si(idAct = 3)
+            RecibirMensaje(itemAct, r3)
+          sino
+            RecibirMensaje(itemAct, r4)
+      si(itemAct >= itemMax)
+        itemMax:= itemAct
+        idMax:= idAct
+    avisarGanador(idMax)
+  fin
+variables
+  r1, r2, r3, r4: recolector
+  rF: fiscalizador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r3, area3)
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r4, area4)
+  AsignarArea(r4, cuadrante)
+  AsignarArea(rF, areaF)
+  Iniciar(r1, 25, 1)
+  Iniciar(r2, 30, 1)
+  Iniciar(r3, 35, 1)
+  Iniciar(r4, 40, 1)
+  Iniciar(rF, 1, 1)
+fin
