@@ -1,0 +1,97 @@
+programa ej1-p3
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso entrarArea(E esPapelero: boolean; E av: numero; E ca: numero; E avIni: numero; E caIni: numero)
+  comenzar
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    si(esPapelero)
+      juntarPapeles
+    sino
+      juntarFlores
+    Pos(avIni, caIni)
+    LiberarEsquina(av, ca)
+  fin
+  proceso depositarItems(E esPapelero: boolean; E av: numero; E ca: numero)
+  comenzar
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    si(esPapelero)
+      depositarPapel
+    sino
+      depositarFlor
+    Pos(av, ca)
+    LiberarEsquina(10, 10)
+  fin
+{-----------}
+areas
+  areaF: AreaPC(1, 1, 5, 10)
+  areaP: AreaPC(6, 1, 10, 9)
+  inicio1: AreaP(6, 10, 6, 10)
+  inicio2: AreaP(7, 10, 7, 10)
+  inicio3: AreaP(8, 10, 8, 10)
+  inicio4: AreaP(9, 10, 9, 10)
+  deposito: AreaC(10, 10, 10, 10)
+{-----------}
+robots
+  robot florero
+  variables
+    AVInicial, CAInicial: numero
+    AVRandom, CARandom: numero
+  comenzar
+    AVInicial:= PosAv
+    CAInicial:= PosCa
+    repetir 5
+      Random(AVRandom, 1, 5)
+      Random(CARandom, 1, 10)
+      entrarArea(F, AVRandom, CARandom, AVInicial, CAInicial)
+    mientras(HayFlorEnLaBolsa)
+      depositarItems(F, AVInicial, CAInicial)
+  fin
+  {----------}
+  robot papelero
+  variables
+    AVInicial, CAInicial: numero
+    AVRandom, CARandom: numero
+  comenzar
+    AVInicial:= PosAv
+    CAInicial:= PosCa
+    repetir 3
+      Random(AVRandom, 6, 10)
+      Random(CARandom, 1, 9)
+      entrarArea(V, AVRandom, CARandom, AVInicial, CAInicial)
+    mientras(HayPapelEnLaBolsa)
+      depositarItems(V, AVInicial, CAInicial)
+  fin
+{-----------}
+variables
+  f1, f2: florero
+  p1, p2: papelero
+{-----------}
+comenzar
+  AsignarArea(f1, areaF)
+  AsignarArea(f1, inicio1)
+  AsignarArea(f2, areaF)
+  AsignarArea(f2, inicio2)
+  AsignarArea(p1, areaP)
+  AsignarArea(p1, inicio3)
+  AsignarArea(p2, areaP)
+  AsignarArea(p2, inicio4)
+  AsignarArea(f1, deposito)
+  AsignarArea(f2, deposito)
+  AsignarArea(p1, deposito)
+  AsignarArea(p2, deposito)
+  Iniciar(f1, 6, 10)
+  Iniciar(f2, 7, 10)
+  Iniciar(p1, 8, 10)
+  Iniciar(p2, 9, 10)
+fin
