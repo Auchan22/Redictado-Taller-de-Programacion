@@ -1,0 +1,128 @@
+programa ej2-p3
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+  fin
+  {------------}
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  {------------}
+  proceso hacerLado(E l: numero)
+  comenzar
+    repetir l
+      mover
+  fin
+  {-------------}
+  proceso escalonP(E l: numero)
+  comenzar
+    hacerLado(l)
+    juntarPapeles
+    izquierda
+    hacerLado(l)
+  fin
+  {------------}
+  proceso escalonF(E l: numero)
+  comenzar
+    hacerLado(l)
+    juntarFlores
+    derecha
+    hacerLado(l)
+  fin
+  {-----------}
+  proceso avisarCentro(E esPapelero: boolean; E id: numero)
+  comenzar
+    si(esPapelero)
+      izquierda
+    sino
+      derecha
+    BloquearEsquina(16, 16)
+    mover
+    EnviarMensaje(id, rJ)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina(16, 16)
+  fin
+{-----------}
+areas
+  ciudad: AreaC(1, 1, 100, 100)
+{-----------}
+robots
+  robot papelero
+  variables
+    ID: numero
+    lado: numero
+  comenzar
+    RecibirMensaje(ID, rJ)
+    lado:= 5
+    repetir 4
+      escalonP(lado)
+      derecha
+      lado:= lado - 1
+    mover
+    avisarCentro( V,ID)
+    lado:= lado + 1
+    repetir 4
+      escalonP(lado)
+      derecha
+      lado:= lado + 1
+  fin
+  {---------}
+  robot florero
+  variables
+    ID: numero
+    lado: numero
+  comenzar
+    RecibirMensaje(ID, rJ)
+    lado:= 5
+    repetir 4
+      escalonF(lado)
+      izquierda
+      lado:= lado - 1
+    mover
+    avisarCentro(F, ID)
+    lado:= lado + 1
+    repetir 4
+      escalonF(lado)
+      izquierda
+      lado:= lado + 1
+  fin
+  {---------}
+  robot jefe
+  variables
+    IDGanador, IDPerdedor: numero
+  comenzar
+    asignarID
+    RecibirMensaje(IDGanador, *)
+    RecibirMensaje(IDPerdedor, *)
+    Informar(IDGanador)
+  fin
+{-----------}
+variables
+  r1: florero
+  r2: papelero
+  rJ: jefe
+{-----------}
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(rJ, ciudad)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 31, 1)
+  Iniciar(rJ, 15, 1)
+fin
