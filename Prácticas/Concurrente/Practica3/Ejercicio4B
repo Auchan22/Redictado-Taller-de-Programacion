@@ -1,0 +1,129 @@
+programa ej4b-p3
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+  {------------}
+  proceso procesarEsquina
+  variables
+    avOg, caOg: numero
+  comenzar
+    avOg:= PosAv
+    caOg:= PosCa
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      Pos(avOg, caOg)
+      LiberarEsquina(10, 10)
+      BloquearEsquina(11, 11)
+      Pos(11, 11)
+      depositarFlor
+      Pos(avOg, caOg)
+      LiberarEsquina(11, 11)
+      BloquearEsquina(10, 10)
+      Pos(10, 10)
+    Pos(avOg, caOg)
+    LiberarEsquina(10, 10)
+  fin
+  {-----------}
+  proceso recolectarTodas
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    Pos(11, 11)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    Pos(av, ca)
+  fin
+  {------------}
+  proceso avisarRobot(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+      EnviarMensaje(F, r4)
+    sino
+      si(id = 2)
+        EnviarMensaje(V, r2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+        EnviarMensaje(F, r4)
+      sino
+        si(id = 3)
+          EnviarMensaje(V, r3)
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r4)
+        sino
+          EnviarMensaje(V, r4)
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r3)
+  fin
+{--------------}
+areas
+  areaR: AreaPC(10, 10, 10, 10)
+  areaD: AreaPC(11, 11, 11, 11)
+  inicioC: AreaP(1, 1, 1, 1)
+  inicio1: AreaP(9, 9, 9, 9)
+  inicio2: AreaP(9, 10, 9, 10)
+  inicio3: AreaP(9, 11, 9, 11)
+  inicio4: AreaP(9, 12, 9, 12)
+{--------------}
+robots
+  robot recolector
+  variables
+    id: numero
+    aux: boolean
+  comenzar
+    RecibirMensaje(id, rC)
+    procesarEsquina
+    EnviarMensaje(id, rC)
+    RecibirMensaje(aux, rC)
+    si(aux)
+      recolectarTodas
+  fin
+  {------------}
+  robot coordinador
+  variables
+    id: numero
+  comenzar
+    asignarID
+    repetir 4
+      RecibirMensaje(id, *)
+    Informar(id)
+    avisarRobot(id)
+  fin
+{--------------}
+variables
+  r1, r2, r3, r4: recolector
+  rC: coordinador
+{--------------}
+comenzar
+  AsignarArea(r1, areaR)
+  AsignarArea(r1, areaD)
+  AsignarArea(r1, inicio1)
+  AsignarArea(r2, areaR)
+  AsignarArea(r2, areaD)
+  AsignarArea(r2, inicio2)
+  AsignarArea(r3, areaR)
+  AsignarArea(r3, areaD)
+  AsignarArea(r3, inicio3)
+  AsignarArea(r4, areaR)
+  AsignarArea(r4, areaD)
+  AsignarArea(r4, inicio4)
+  AsignarArea(rC, inicioC)
+  Iniciar(rC, 1, 1)
+  Iniciar(r1, 9, 9)
+  Iniciar(r2, 9, 10)
+  Iniciar(r3, 9, 11)
+  Iniciar(r4, 9, 12)
+fin
