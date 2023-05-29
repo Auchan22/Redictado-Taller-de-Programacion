@@ -1,0 +1,149 @@
+programa ej1-p4
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+  {------}
+  proceso Avisar_Flores
+  variables
+    f: numero
+  comenzar
+    Random(f, 1, 4)
+    EnviarMensaje(f, rS)
+  fin
+  {------}
+  proceso Avisar_Pos
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa + 1
+    EnviarMensaje(av, rS)
+    EnviarMensaje(ca, rS)
+  fin
+  {------}
+  proceso Depositar_N_Flores(E n: numero; E av: numero; E ca: numero)
+  variables
+    avOg, caOg: numero
+  comenzar
+    avOg:= PosAv
+    caOg:= PosCa
+    Pos(av, ca)
+    repetir n
+      depositarFlor
+    Pos(avOg, caOg)
+  fin
+  {------}
+  proceso Avisar_Inicio_Robot(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, r1)
+    sino
+      si(id = 2)
+        EnviarMensaje(V, r2)
+      sino
+        EnviarMensaje(V, r3)
+  fin
+  {------}
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  {------}
+  proceso Recorrido
+  variables
+    av, ca: numero
+    f: numero
+  comenzar
+    f:= 0
+    av:= PosAv
+    ca:= PosCa
+    mover
+    juntarFlores(f)
+    Pos(av, ca)
+    mientras(PosCa < 100) & (f > 0)
+      depositarFlor
+      f:= f - 1
+      mover
+  fin
+{--------}
+areas
+  area1: AreaP(1, 1, 1, 100)
+  area2: AreaP(2, 1, 2, 100)
+  area3: AreaP(3, 1, 3, 100)
+  areaS: AreaP(100, 100, 100, 100)
+{--------}
+robots
+  robot cliente
+  variables
+    id: numero
+    aux: boolean
+  comenzar
+    RecibirMensaje(id, rS)
+    mientras(PosCa < 100)
+      EnviarMensaje(id, rS)
+      Avisar_Flores
+      Avisar_Pos
+      RecibirMensaje(aux, rS)
+      Recorrido
+    EnviarMensaje(id, rS)
+    EnviarMensaje(0, rS)
+  fin
+  {--------}
+  robot servidor
+  variables
+    idRobot, fRobot: numero
+    avRobot, caRobot: numero
+    aux: numero
+  comenzar
+    aux:= 1
+    asignarID
+    mientras (aux < 4)
+      RecibirMensaje(idRobot, *)
+      si(idRobot = 1)
+        RecibirMensaje(fRobot, r1)
+      sino
+        si(idRobot = 2)
+          RecibirMensaje(fRobot, r2)
+        sino
+          RecibirMensaje(fRobot, r3)
+      si((fRobot <> 0) = V)
+        si(idRobot = 1)
+          RecibirMensaje(avRobot, r1)
+          RecibirMensaje(caRobot, r1)
+        sino
+          si(idRobot = 2)
+            RecibirMensaje(avRobot, r2)
+            RecibirMensaje(caRobot, r2)
+          sino
+            RecibirMensaje(avRobot, r3)
+            RecibirMensaje(caRobot, r3)
+       { Informar(avRobot, caRobot)}
+        Depositar_N_Flores(fRobot, avRobot, caRobot)
+        Avisar_Inicio_Robot(idRobot)
+      sino
+        aux:= aux + 1
+  fin
+{--------}
+variables
+  r1, r2, r3: cliente
+  rS: servidor
+{--------}
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(r3, area3)
+  AsignarArea(rS, areaS)
+  AsignarArea(rS, area1)
+  AsignarArea(rS, area2)
+  AsignarArea(rS, area3)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 2, 1)
+  Iniciar(r3, 3, 1)
+  Iniciar(rS, 100, 100)
+fin
