@@ -1,0 +1,92 @@
+programa ej5-p3
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+  {------------}
+  proceso recolectarPapel(ES ok: boolean)
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(11, 11)
+    Pos(11, 11)
+    si(HayPapelEnLaEsquina)
+      tomarPapel
+      ok:= V
+    sino
+      ok:= F
+    Pos(av, ca)
+    LiberarEsquina(11, 11)
+  fin
+  {------------}
+  proceso recorrerAvenida
+  variables
+    ok: boolean
+  comenzar
+    ok:= F
+    recolectarPapel(ok)
+    mientras (ok) & (PosCa < 100)
+      depositarPapel
+      mover
+      recolectarPapel(ok) {Aca me dice si recolecto o no papel, y si sigue o no recorriendo la av}
+  fin
+{--------------}
+areas
+  areaR: AreaPC(11, 11, 11, 11)
+  area1: AreaP(4, 1, 4, 100)
+  area2: AreaP(6, 1, 6, 100)
+  area3: AreaP(8, 1, 8, 100)
+  area4: AreaP(10, 1, 10, 100)
+  areaC: AreaP(1,1,1,1)
+{--------------}
+robots
+  robot corredor
+  variables
+    id: numero
+  comenzar
+    RecibirMensaje(id, rC)
+    recorrerAvenida
+    EnviarMensaje(id, rC)
+  fin
+  {------------}
+  robot coordinador
+  variables
+    idRobot: numero
+  comenzar
+    asignarID
+    repetir 4
+      RecibirMensaje(idRobot, *)
+    Informar('llego_mas_lejos', idRobot)
+  fin
+{--------------}
+variables
+  r1, r2, r3, r4: corredor
+  rC: coordinador
+{--------------}
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, areaR)
+  {------------}
+  AsignarArea(r2, area2)
+  AsignarArea(r2, areaR)
+  {------------}
+  AsignarArea(r3, area3)
+  AsignarArea(r3, areaR)
+  {------------}
+  AsignarArea(r4, area4)
+  AsignarArea(r4, areaR)
+  {-------------}
+  AsignarArea(rC, areaC)
+  {-------------}
+  Iniciar(r1, 4, 1)
+  Iniciar(r2, 6, 1)
+  Iniciar(r3, 8, 1)
+  Iniciar(r4, 10, 1)
+  Iniciar(rC, 1, 1)
+fin
