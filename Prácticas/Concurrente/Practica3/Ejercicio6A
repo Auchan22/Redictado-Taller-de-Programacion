@@ -1,0 +1,204 @@
+programa ej6a-p3
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+  {---------}
+  proceso juntarFlores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin 
+  {---------}
+  proceso juntarPapeles(ES cP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cP:= cP + 1
+  fin 
+  {---------}
+  proceso Cuadrante_Florero(ES cF: numero)
+  variables
+    avSig, caSig: numero
+  comenzar
+    repetir 4
+      repetir 5
+        juntarFlores(cF)
+        avSig:= PosAv + 1
+        caSig:= PosCa + 1
+        si((avSig = 5) & (caSig= 7)) | ((avSig = 7) & (caSig = 5))
+          BloquearEsquina(avSig, caSig)
+          mover
+          juntaFlores(cF)
+          mover
+          LiberarEsquina(avSig, caSig)
+        sino
+          mover
+      juntarFlores(cF)
+      derecha
+  fin
+  {---------}
+  proceso Cuadrante_Papelero(ES cP: numero)
+  variables
+    avSig, caSig: numero
+  comenzar
+    repetir 4
+      repetir 6
+        juntarPapeles(cP)
+        avSig:= PosAv + 1
+        caSig:= PosCa + 1
+        si ((avSig = 9) & (caSig = 14)) | ((avSig = 14) & (caSig = 9))
+          BloquearEsquina(avSig, caSig)
+          mover
+          juntarPapeles(cP)
+          mover
+          LiberarEsquina(avSig, caSig)
+        sino
+          mover
+      juntarPapeles(cP)
+      derecha
+  fin
+  {---------}
+  proceso Cuadrante_Ambos(ES cF: numero; ES cP: numero)
+  comenzar
+    repetir 4
+      repetir 9
+        juntarFlores(cF)
+        juntarPapeles(cP)
+        mover
+      juntarFlores(cF)
+      juntarPapeles(cP)
+      derecha
+  fin
+  {---------}
+  proceso Hacer_Cuadrante(E id: numero; ES cF: numero; ES cP: numero)
+  comenzar
+    si(id = 1)
+      Cuadrante_Florero(cF)
+    sino
+      si(id = 2)
+        Cuadrante_Ambos(cF, cP)
+      sino
+        Cuadrante_Papelero(cP)
+  fin
+  {---------}
+  proceso Avisar_Calle(E id: numero; E ca: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(ca, r1)
+    sino
+      si(id = 2)
+        EnviarMensaje(ca, r2)
+      sino
+        EnviarMensaje(ca, r3)
+  fin
+  {---------}
+  proceso Calle_Florero(ES cF: numero)
+  comenzar
+    mientras (cF > 0) & (PosAv < 100)
+      depositarFlor
+      mover
+      cF:= cF - 1
+    si(cF > 0) & (PosAv = 100)
+      depositarFlor
+      cF:= cF - 1
+  fin
+  {---------}
+  proceso Calle_Ambos(ES cF: numero; ES cP: numero)
+  comenzar
+    mientras ((cF > 0) & (cP > 0)) & (PosAv < 100)
+      depositarFlor
+      depositarPapel
+      mover
+      cF:= cF - 1
+      cP:= cP - 1
+    si((cF > 0) & (cP > 0)) & (PosAv = 100)
+      depositarFlor
+      depositarPapel
+      cF:= cF - 1
+      cP:= cP - 1
+  fin
+  {---------}
+  proceso Calle_Papelero(ES cP: numero)
+  comenzar
+    mientras (cP > 0) & (PosAv < 100)
+      depositarPapel
+      mover
+      cP:= cP - 1
+    si(cP > 0) & (PosAv = 100)
+      depositarPapel
+      cP:= cP - 1
+  fin
+  {---------}
+  proceso Hacer_Calle(E id: numero; ES cF: numero; ES cP: numero)
+  comenzar
+    si(id = 1)
+      Calle_Florero(cF)
+    sino
+      si(id = 2)
+        Calle_Ambos(cF, cP)
+      sino
+        Calle_Papelero(cP)
+  fin
+{-----------}
+areas
+  cuadrantes: AreaPC(2, 2, 16, 16)
+  areaF: AreaP(1, 1, 1, 1)
+  areaD: AreaPC(1, 20, 100, 22)
+{-----------}
+robots
+  robot recolector
+  variables
+    id: numero
+    cF, cP: numero
+    ca: numero
+  comenzar
+    RecibirMensaje(id, rF)
+    cF:= 0
+    cP:= 0
+    Hacer_Cuadrante(id, cF, cP)
+    EnviarMensaje(id, rF)
+    RecibirMensaje(ca, rF)
+    Informar(ca)
+    Pos(1, ca)
+    derecha
+    Hacer_Calle(id, cF, cP)
+  fin
+  {---------}
+  robot fiscalizador
+  variables
+    id, ca: numero
+  comenzar
+    asignarID
+    ca:= 20
+    repetir 3
+      RecibirMensaje(id, *)
+      Avisar_Calle(id, ca)
+      ca:= ca + 1 
+  fin
+{-----------}
+variables
+  r1, r2, r3: recolector
+  rF: fiscalizador
+{-----------}
+comenzar
+  AsignarArea(r1, cuadrantes)
+  AsignarArea(r1, areaD)
+  {---------}
+  AsignarArea(r2, cuadrantes)
+  AsignarArea(r2, areaD)
+  {---------}
+  AsignarArea(r3, cuadrantes)
+  AsignarArea(r3, areaD)
+  {---------}
+  AsignarArea(rF, areaF)
+  {---------}
+  Iniciar(rF, 1, 1)
+  Iniciar(r1, 2, 2)
+  Iniciar(r2, 5, 5)
+  Iniciar(r3, 9, 9)
+fin
