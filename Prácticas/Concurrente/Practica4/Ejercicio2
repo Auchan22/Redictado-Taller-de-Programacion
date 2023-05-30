@@ -1,0 +1,108 @@
+programa ej2-p4
+procesos
+  proceso Depositar_Papeles
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(50, 50)
+    Pos(50, 50)
+    repetir 5
+      depositarPapel
+    Pos(av, ca)
+    LiberarEsquina(50, 50)
+  fin
+  {--------}
+  proceso Recorrer_Avenida
+  variables
+    papel: numero
+  comenzar
+    papel:= 0
+    mientras(PosCa < 100)
+      mientras(HayPapelEnLaEsquina)
+        tomarPapel
+        papel:= papel + 1
+      si(papel >= 5)
+        Depositar_Papeles
+        papel:= papel - 5
+      mover
+  fin
+  {-------}
+  proceso EntrarDeposito(ES ok: boolean; E p: numero)
+  variables
+    av, ca: numero
+    aux: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    aux:= 0
+    BloquearEsquina(50, 50)
+    Pos(50, 50)
+    repetir p
+      si(HayPapelEnLaEsquina)
+        tomarPapel
+        aux:= aux + 1
+    si(aux = p)
+      aux:= 0
+      ok:= V
+    sino
+      ok:= F
+      repetir aux
+        depositarPapel
+      aux:= 0
+    Pos(av, ca)
+    LiberarEsquina(50, 50)
+  fin
+{---------}
+areas
+  avenida1: AreaP(5, 1, 5, 100)
+  avenida2: AreaP(10, 1, 10, 100)
+  deposito: AreaC(50, 50, 50, 50)
+  inicioC1: AreaP(11, 1, 11, 1)
+  inicioC2: AreaP(12, 1, 12, 1)
+{---------}
+robots
+  robot productor
+  comenzar
+    Recorrer_Avenida
+  fin
+  {-------}
+  robot consumidor
+  variables
+    aux: numero
+    ok: boolean
+    pRandom: numero
+  comenzar
+    aux:= 0
+    ok:= F
+    mientras(aux < 8)
+      Random(pRandom, 2, 5)
+      Informar(pRandom)
+      EntrarDeposito(ok, pRandom)
+      si(ok)
+        repetir pRandom
+          depositarPapel
+      sino
+        aux:= aux + 1
+        Informar('no_junto_necesario', aux)
+  fin
+{---------}
+variables
+  c1, c2: consumidor
+  p1, p2: productor
+{---------}
+comenzar
+  AsignarArea(c1, inicioC1)
+  AsignarArea(c1, deposito)
+  AsignarArea(c2, inicioC2)
+  AsignarArea(c2, deposito)
+  AsignarArea(p1, avenida1)
+  AsignarArea(p1, deposito)
+  AsignarArea(p2, avenida2)
+  AsignarArea(p2, deposito)
+  Iniciar(p1, 5, 1)
+  Iniciar(p2, 10, 1)
+  Iniciar(c1, 11, 1)
+  Iniciar(c2, 12, 1)
+fin
