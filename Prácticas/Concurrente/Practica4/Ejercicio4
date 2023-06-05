@@ -1,0 +1,120 @@
+programa ej4-p4
+procesos 
+  proceso Asignar_ID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+  fin
+  {------------}
+  proceso Recoger_Flores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  {------------}
+  proceso Recoger_Papeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  {------------}
+  proceso Vaciar_Bolsa
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  {------------}
+  proceso Avisar_Robot
+  variables
+    ID_Random: numero
+    T_Random: numero
+    av, ca: numero
+  comenzar
+    Random(ID_Random, 1, 2)
+    Random(T_Random, 1, 4)
+    Random(av, 2, 100)
+    Random(ca, 2, 100)
+    si(ID_Random = 1)
+      EnviarMensaje(T_Random, r1)
+      EnviarMensaje(av, r1)
+      EnviarMensaje(ca, r1)
+    sino
+      EnviarMensaje(T_Random, r2)
+      EnviarMensaje(av, r2)
+      EnviarMensaje(ca, r2)
+  fin
+  {------------}
+  proceso Avisar_Fin
+  comenzar
+    EnviarMensaje(4, r1)
+    EnviarMensaje(4, r2)
+  fin
+  {------------}
+  proceso Ejecutar_Tarea(E id_t: numero; E av: numero; E ca: numero)
+  comenzar
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    si(id_t = 1)
+      Recoger_Flores
+    sino
+      si(id_t = 2)
+        Recoger_Papeles
+      sino
+        Vaciar_Bolsa
+  fin
+{--------------}
+areas
+  inicio1: AreaP(2, 1, 2, 1)
+  inicio2: AreaP(3, 1, 3, 1)
+  inicioJ: AreaP(1, 1, 1, 1)
+  cuadrante: AreaPC(2, 2, 100, 100)
+{--------------}
+robots
+  robot trabajador
+  variables
+    ID: numero
+    Tarea: numero
+    av, ca: numero
+    av_actual, ca_actual: numero
+  comenzar
+    RecibirMensaje(ID, rJ)
+    RecibirMensaje(Tarea, rJ)
+    Informar(Tarea)
+    mientras(Tarea <> 4)
+      Informar(Tarea)
+      av_actual:= PosAv
+      ca_actual:= PosCa
+      RecibirMensaje(av, rJ)
+      RecibirMensaje(ca, rJ)
+      Ejecutar_Tarea(Tarea, av, ca)
+      LiberarEsquina(av_actual, ca_actual)
+      RecibirMensaje(Tarea, rJ)
+  fin
+  {------------}
+  robot jefe
+  comenzar
+    Asignar_ID
+    repetir 10
+      Avisar_Robot
+    Avisar_Fin
+  fin
+{--------------}
+variables
+  r1, r2: trabajador
+  rJ: jefe
+{--------------}
+comenzar
+  AsignarArea(r1, inicio1)
+  AsignarArea(r1, cuadrante)
+  {-}
+  AsignarArea(r2, inicio2)
+  AsignarArea(r2, cuadrante)
+  {-}
+  AsignarArea(rJ, inicioJ)
+  {-}
+  Iniciar(rJ, 1, 1)
+  Iniciar(r1, 2, 1)
+  Iniciar(r2, 3, 1)
+fin
