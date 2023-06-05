@@ -1,0 +1,173 @@
+programa Parcial-1raFecha-23052022
+procesos
+  proceso Asignar_Equipo
+  comenzar
+    EnviarMensaje(1, a1)
+    EnviarMensaje(1, a2)
+    EnviarMensaje(1, a3)
+    EnviarMensaje(2, v1)
+    EnviarMensaje(2, v2)
+    EnviarMensaje(2, v3)
+  fin
+  {----------}
+  proceso Recoger_Flores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  {----------}
+  proceso Depositar_Flores(ES cF: numero)
+  comenzar
+    repetir cF
+      depositarFlor
+    cF:= 0
+  fin
+  {----------}
+  proceso Entrar_Medio(E av: numero; E ca: numero; ES cF: numero)
+  comenzar
+    BloquearEsquina(av, 20)
+    Pos(av, 20)
+    Depositar_Flores(cF)
+    Pos(av,ca)
+    LiberarEsquina(av, 20)
+  fin
+  {----------}
+  proceso Hacer_Paso_Lateral(E esVerde: boolean)
+  variables
+    av, ca: numero
+    cF: numero
+  comenzar
+    cF:= 0
+    av:= PosAv
+    ca:= PosCa
+    Recoger_Flores(cF)
+    Entrar_Medio(av, ca, cF)
+    si(esVerde)
+      EnviarMensaje(V, v2)
+    sino
+      EnviarMensaje(V, a2)
+  fin
+  {----------}
+  proceso Hacer_Calle_Lateral
+  comenzar
+    repetir 9
+      si(PosAv >= 10) & (PosAv <= 19)
+        Hacer_Paso_Lateral(F)
+      sino
+        Hacer_Paso_Lateral(V)
+      mover
+    si ((PosAv >= 10) & (PosAv <= 19))
+      Hacer_Paso_Lateral(F)
+    sino
+      Hacer_Paso_Lateral(V)
+  fin
+  {----------}
+  proceso orientar
+  comenzar
+    si ((PosAv >= 9) & (PosAv <= 19))
+      derecha
+    sino
+      repetir 3
+        derecha
+  fin
+  {----------}
+  proceso max(E e: numero; E f: numero; ES em: numero; ES fm: numero)
+  comenzar
+    si(f > fm)
+      fm:= f
+      em:= e
+  fin
+{------------}
+areas
+  deposito: AreaPC(20, 20, 20, 20)
+  areaV: AreaPC(21, 19, 31, 21)
+  areaA: AreaPC(9, 19, 19, 21)
+  inicioF: AreaP(20, 18, 20, 18)
+{------------}
+robots
+  robot lateral
+  variables
+    equipo: numero
+  comenzar
+    orientar
+    RecibirMensaje(equipo, rF)
+    mover
+    Hacer_Calle_Lateral
+  fin
+  {----------}
+  robot central
+  variables
+    equipo: numero
+    ok: boolean
+    cF: numero
+    av, ca: numero
+  comenzar
+    cF:= 0
+    orientar
+    RecibirMensaje(equipo, rF)
+    repetir 10
+      si(PosAv >= 21)
+        RecibirMensaje(ok, v1)
+        RecibirMensaje(ok, v3)
+      sino
+        RecibirMensaje(ok, a1)
+        RecibirMensaje(ok, a3)
+      mover
+      Recoger_Flores(cF)
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(20, 20)
+    Pos(20, 20)
+    EnviarMensaje(equipo, rF)
+    EnviarMensaje(cF, rF)
+    Depositar_Flores(cF)
+    Pos(av, ca)
+    LiberarEsquina(20, 20)
+  fin
+  {----------}
+  robot fiscalizador
+  variables
+    equipo_Robot, f_Robot: numero
+    equipo_Max, f_Max: numero
+  comenzar
+    equipo_Max:= -1
+    f_Max:= -1
+    Asignar_Equipo
+    repetir 2
+      RecibirMensaje(equipo_Robot, *)
+      Informar(equipo_Robot)
+      si(equipo_Robot = 1)
+        RecibirMensaje(f_Robot, a2)
+      sino
+        RecibirMensaje(f_Robot, v2)
+      max(equipo_Robot, f_Robot, equipo_Max, f_Max)
+    Informar(equipo_Max, f_Max)
+  fin
+{------------}
+variables
+  a1, a3, v1, v3: lateral
+  a2, v2: central
+  rF: fiscalizador
+{-------------}
+comenzar
+  AsignarArea(a1, areaA)
+  AsignarArea(a2, areaA)
+  AsignarArea(a3, areaA)
+  AsignarArea(a2, deposito)
+  {-}
+  AsignarArea(v1, areaV)
+  AsignarArea(v2, areaV)
+  AsignarArea(v3, areaV)
+  AsignarArea(v2, deposito)
+  {-}
+  AsignarArea(rF, inicioF)
+  {-}
+  Iniciar(rF, 20, 18)
+  Iniciar(a1, 9, 19)
+  Iniciar(a2, 9, 20)
+  Iniciar(a3, 9, 21)
+  Iniciar(v1, 31, 19)
+  Iniciar(v2, 31, 20)
+  Iniciar(v3, 31, 21)
+fin
