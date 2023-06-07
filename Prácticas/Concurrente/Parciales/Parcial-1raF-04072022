@@ -1,0 +1,142 @@
+programa Parcial-04072022
+procesos
+  proceso Asignar_ID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+  {---------}
+  proceso Recolectar_Flores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  {---------}
+  proceso Hacer_Lado(ES cF: numero)
+  comenzar
+    repetir 5
+      Recolectar_Flores(cF)
+      mover
+    Recolectar_Flores(cF)
+  fin
+  {--------}
+  proceso Avisar_Robots
+  comenzar
+    EnviarMensaje(V, r1)
+    EnviarMensaje(V ,r2)
+    EnviarMensaje(V, r3)
+  fin
+  {---------}
+  proceso calc_maximo(E id: numero; E f: numero; ES idm: numero; ES fm: numero)
+  comenzar
+    si(f > fm)
+      fm:= f
+      idm:= id
+  fin
+  {---------}
+  proceso Avisar_Ganador(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+    sino
+      si(id = 2)
+        EnviarMensaje(V, r2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+      sino
+        EnviarMensaje(V, r3)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r2)
+  fin
+  {----------}
+  proceso Depositar_Flores(ES cF: numero)
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    mientras(cF > 0)
+      Pos(10, 10)
+      depositarFlor
+      cF:= cF - 1
+      Pos(av, ca)
+  fin
+{----------}
+areas
+  cuadrante: AreaPC(1, 1, 18, 6)
+  areaC: AreaP(20, 1, 20, 1)
+  deposito: AreaPC(10, 10, 10, 10)
+{----------}
+robots
+  robot trabajador
+  variables
+    id: numero
+    cF: numero
+    ok: boolean
+  comenzar
+    cF:= 0
+    RecibirMensaje(id, rC)
+    repetir 4
+      Hacer_Lado(cF)
+      EnviarMensaje(V, rC)
+      derecha
+      RecibirMensaje(ok, rC)
+    EnviarMensaje(id, rC)
+    EnviarMensaje(cF, rC)
+    RecibirMensaje(ok, rC)
+    si(ok)
+      Depositar_Flores(cF)
+  fin
+  {--------}
+  robot coordinador
+  variables
+    ok: boolean
+    idRobot, fRobot: numero
+    idMax, fMax: numero
+  comenzar
+    idMax:= 0
+    fMax:= -1
+    Asignar_ID
+    repetir 4
+      repetir 3
+        RecibirMensaje(ok, *)
+      Avisar_Robots
+    repetir 3
+      RecibirMensaje(idRobot, *)
+      si(idRobot = 1)
+        RecibirMensaje(fRobot, r1)
+      sino
+        si(idRobot = 2)
+          RecibirMensaje(fRobot, r2)
+        sino
+          RecibirMensaje(fRobot, r3)
+      calc_maximo(idRobot, fRobot, idMax, fMax)
+    Informar(idMax, fMax)
+    Avisar_Ganador(idMax)
+  fin
+{----------}
+variables
+  r1, r2, r3: trabajador
+  rC: coordinador
+{----------}
+comenzar
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r1, deposito)
+  {-}
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r2, deposito)
+  {-}
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r3, deposito)
+  {-}
+  AsignarArea(rC, areaC)
+  {-}
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 7, 1)
+  Iniciar(r3, 13, 1)
+  Iniciar(rC, 20, 1)
+fin
