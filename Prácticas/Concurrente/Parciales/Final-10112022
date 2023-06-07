@@ -1,0 +1,142 @@
+programa Final-10112022
+procesos
+  proceso Recolectar_Flores(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  {--------}
+  proceso Depositar_Flores(ES cF: numero)
+  comenzar
+    mientras(cF > 0)
+      depositarFlor
+      cF:= cF - 1
+  fin
+  {--------}
+  proceso Dar_Flores(ES cF: numero)
+  variables
+    av, ca: numero
+    caNueva: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    caNueva:= ca - 1
+    BloquearEsquina(av, caNueva)
+    Pos(av, caNueva)
+    Depositar_Flores(cF)
+    Pos(av, ca)
+    LiberarEsquina(av, caNueva)
+  fin
+  {--------}
+  proceso Hacer_Vertical(ES cF: numero)
+  comenzar
+    repetir 7
+      Recolectar_Flores(cF)
+      mover
+    Recolectar_Flores(cF)
+    Dar_Flores(cF)
+    si(PosAv = 21)
+      EnviarMensaje(V, vH)
+    sino
+      EnviarMensaje(V, aH)
+  fin
+  {--------}
+  proceso Deposito_Uno(ES cF: numero)
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    mientras(cF > 0)
+      BloquearEsquina(20, 20)
+      Pos(20, 20)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(20, 20)
+      cF:= cF - 1
+  fin
+  {--------}
+  proceso orientar
+  comenzar
+    si(PosCa = 29)
+      repetir 2
+        derecha
+    sino
+      si(PosAv = 9)
+        derecha
+      sino
+        repetir 3
+          derecha
+    mover
+  fin
+{----------}
+areas
+  deposito: AreaPC(20, 20, 20, 20)
+  recorrido_vV: AreaP(21, 21, 21, 29)
+  recorrido_vH: AreaP(21, 20, 31, 20)
+  recorrido_aV: AreaP(19, 21, 19, 29)
+  recorrido_aH: AreaP(9, 20, 19, 20)
+{----------}
+robots
+  robot vertical
+  variables
+    cF: numero
+    equipo: numero
+  comenzar
+    si(PosCa = 29) & (PosAv = 21)
+      equipo:= 2
+      EnviarMensaje(equipo, vH)
+    sino
+      equipo:= 1
+      EnviarMensaje(equipo, aH)
+    orientar
+    cF:= 0
+    Hacer_Vertical(cF)
+  fin
+  {---------}
+  robot horizontal
+  variables
+    cF: numero
+    equipo: numero
+    ok: boolean
+  comenzar
+    si(PosAv = 31) & (PosCa = 20)
+      RecibirMensaje(equipo, vV)
+    sino
+      RecibirMensaje(equipo, aV)
+    {Informar(equipo)}
+    orientar
+    cF:= 0
+    repetir 8
+      Recolectar_Flores(cF)
+      mover
+    si(equipo = 1)
+      RecibirMensaje(ok, aV)
+    sino
+      RecibirMensaje(ok, vV)
+    mover
+    Recolectar_Flores(cF)
+    Deposito_Uno(cF)
+  fin
+{----------}
+variables
+  aV, vV: vertical
+  aH, vH: horizontal
+{----------}
+comenzar
+  AsignarArea(aV, recorrido_aV)
+  AsignarArea(aV, recorrido_aH)
+  AsignarArea(aH, recorrido_aH)
+  AsignarArea(aH, deposito)
+  {-}
+  AsignarArea(vV, recorrido_vV)
+  AsignarArea(vV, recorrido_vH)
+  AsignarArea(vH, recorrido_vH)
+  AsignarArea(vH, deposito)
+  {-}
+  Iniciar(aV, 19, 29)
+  Iniciar(aH, 9, 20)
+  Iniciar(vV, 21, 29)
+  Iniciar(vH, 31, 20)
+fin
