@@ -1,0 +1,119 @@
+programa Parcial-TF-T1-2022
+procesos
+  proceso Asignar_ID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+  fin
+  {---------}
+  proceso Recolectar_Flores(ES cF: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina) & (cF < 10)
+      tomarFlor
+      cF:= cF + 1
+  fin
+  {---------}
+  proceso Depositar_Flores
+  comenzar
+    mientras (HayFlorEnLaBolsa) 
+      depositarFlor
+  fin
+  {---------}
+  proceso Recolectar_Flores_Cosechador(ES cF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cF:= cF + 1
+  fin
+{----------}
+areas
+  deposito: AreaC(10, 10, 10, 10)
+  calle1: AreaP(1, 3, 100, 3)
+  calle2: AreaP(1, 4, 100, 4)
+  inicioC: AreaP(1, 5, 1, 5)
+{----------}
+robots
+  robot recolector
+  variables
+    id: numero
+    cF: numero
+    pasos: numero
+    av, ca: numero
+    deposito: boolean
+  comenzar
+    derecha
+    RecibirMensaje(id, rC)
+    Informar(id)
+    cF:= 0
+    pasos:= 0
+    mientras(PosAv < 100)
+      deposito:= F
+      mientras(pasos < 5) & (cF < 10) & (PosAv < 100)
+        Recolectar_Flores(cF)
+        pasos:= pasos + 1
+        mover
+      si(pasos = 5) | (cF = 10)
+        av:= PosAv
+        ca:= PosCa
+        si(pasos = 5)
+          pasos:= 0
+        si(cF = 10)
+          cF:= 0        
+        BloquearEsquina(10, 10)
+        Pos(10, 10)
+        {Informar('entre', 0)}
+        si(HayFlorEnLaBolsa)
+          Depositar_Flores
+          deposito:= V
+        Pos(av, ca)
+        LiberarEsquina(10, 10)
+        si(deposito)
+          EnviarMensaje(id, rC)
+    EnviarMensaje(-1, rC)
+  fin
+  {---------}
+  robot cosechador
+  variables
+    id_Robot: numero
+    aux: numero
+    av, ca: numero
+    cF: numero
+  comenzar
+    Asignar_ID
+    av:= PosAv
+    ca:= PosCa
+    cF:= 0
+    aux:= 0
+    mientras(aux < 2)
+      RecibirMensaje(id_Robot, *)
+      {Informar(id_Robot)}
+      si(id_Robot = 1) | (id_Robot = 2)
+        BloquearEsquina(10, 10)
+        Pos(10, 10)
+        Recolectar_Flores_Cosechador(cF)
+        Pos(av, ca)
+        LiberarEsquina(10, 10)
+      sino
+        aux:= aux + 1
+        {Informar('aux', aux)}
+    Informar(cF)
+  fin
+{----------}
+variables
+  r1, r2: recolector
+  rC: cosechador
+{----------}
+comenzar
+  AsignarArea(r1, deposito)
+  AsignarArea(r1, calle1)
+  {-}
+  AsignarArea(r2, deposito)
+  AsignarArea(r2, calle2)
+  {-}
+  AsignarArea(rC, inicioC)
+  AsignarArea(rC, deposito)
+  {-}
+  Iniciar(r1, 1, 3)
+  Iniciar(r2, 1, 4)
+  Iniciar(rC, 1, 5)
+fin
